@@ -1,21 +1,195 @@
 {
   "domain": "water-project-progress",
-  "version": 1,
+  "version": 2,
   "sample_id": "record-009",
   "actors": [
-    "业务负责人",
-    "一线执行人员",
-    "审查人员"
+    {
+      "id": "contractor",
+      "name": "承包商",
+      "commits": "提交本标段事实（施工段、完成工程量、车辆与用工记录、影像）",
+      "may_not": [
+        "不得自行确认实物量",
+        "不得代监理签认计量",
+        "不得将跨标段调拨材料计为本标段完成量"
+      ]
+    },
+    {
+      "id": "supervisor",
+      "name": "监理",
+      "commits": "依据现场核验确认实物量，核对工程量与合同清单、设计变更一致",
+      "may_not": [
+        "不得仅凭付款额倒推完成量",
+        "不得重复确认返工量和已计量的调拨材料",
+        "不得补签迟到签证替代当期计量"
+      ]
+    },
+    {
+      "id": "finance",
+      "name": "财务",
+      "commits": "只处理已批准款项，按合同与监理签认凭证支付（含预付款）",
+      "may_not": [
+        "不得把预付款记作已完工程投资",
+        "不得批准无实物量依据的进度款",
+        "不得代签现场计量或事实确认"
+      ]
+    }
   ],
+  "segregation_rule": "承包商提交本标段事实，监理确认实物量，财务只处理已批准款项；三类角色不能互相代签。",
   "facts": [
     "前8个月全国完成水利建设投资6903亿元",
     "同期实施各类水利项目3.8万个并新开工多项重大工程",
-    "青铜峡灌区项目需在10月底前完成部分渠道砌护以保障冬灌"
+    "青铜峡灌区项目需在10月底前完成部分渠道砌护以保障冬灌",
+    "部分标段已支付预付款，但渠道砌护实物进度仍可能赶不上冬灌",
+    "月报声称投资与进度同步增长，与现场实物量核对存在偏差"
   ],
   "constraints": [
-    "概算合同关联",
-    "实物量计量",
-    "支付核对",
-    "节点风险预测"
-  ]
+    "批复概算、合同清单、计量与付款逐环节对应",
+    "进度按施工段和工程量组织，不得以付款额代替完成量",
+    "跨标段材料调拨、返工、迟到签证不得重复确认",
+    "月结须说明资金与实物量偏差、关键线路、责任标段、可追回工程量",
+    "公开信息隐藏合同敏感单价"
+  ],
+  "progress_basis": {
+    "organize_by": ["施工段", "工程量"],
+    "must_not_use_as_completion": ["付款额", "预付款", "百分比口径的事后解释"],
+    "principle": "建设单位用施工段和工程量组织进度；付款是资金行为，不是完成量证据。"
+  },
+  "evidence_chain": [
+    {
+      "id": "approved_estimate",
+      "name": "批复概算",
+      "confirms": "投资控制上限与分项口径，是合同清单和付款的总量边界"
+    },
+    {
+      "id": "contract_boq",
+      "name": "合同清单（BOQ）",
+      "confirms": "各标段工程量与计价条目，计量与支付均须落到清单子目"
+    },
+    {
+      "id": "beidou_vehicle_log",
+      "name": "北斗车辆记录",
+      "confirms": "材料运输与设备到场的客观轨迹，佐证实物量发生的时间和地点"
+    },
+    {
+      "id": "supervisor_measurement",
+      "name": "监理计量",
+      "confirms": "经现场核验的合格实物量，是进度款的唯一工程量依据"
+    },
+    {
+      "id": "site_imagery",
+      "name": "现场影像",
+      "confirms": "施工段形象进度与隐蔽工程留痕，用于交叉印证计量"
+    },
+    {
+      "id": "design_change",
+      "name": "设计变更",
+      "confirms": "工程量增减的合法来源；未批复变更不得进入计量"
+    },
+    {
+      "id": "payment_voucher",
+      "name": "付款凭证",
+      "confirms": "已批准款项的实际支付，含预付款但与完成量分账记录"
+    }
+  ],
+  "excluded_from_reconfirmation": [
+    "跨标段材料调拨：材料仅在实际消耗标段计量一次，调出标段不得计完成量",
+    "返工：不合格工程的返工量不新增计量，原计量按质量结论核减",
+    "迟到签证：事后补签不得回填到以前账期重复确认，只能在批复当期处理"
+  ],
+  "public_redaction": [
+    "对外公开版本隐去合同清单中的敏感单价和合价，仅保留工程量与形象进度",
+    "隐去人员身份与账户信息（仓库样例本身不含真实个人信息）"
+  ],
+  "milestones": [
+    {
+      "id": "qtg-1031-lining",
+      "project": "青铜峡灌区渠道砌护",
+      "deadline": "10-31",
+      "work": "冬灌前必须完成的关键施工段渠道砌护",
+      "purpose": "保障冬灌通水",
+      "critical_path": true
+    }
+  ],
+  "monthly_review_required": [
+    {
+      "key": "fund_physical_deviation",
+      "name": "资金与实物量偏差",
+      "states": "分列支付额（含预付款）、监理确认实物量及两者差额，标注差额性质"
+    },
+    {
+      "key": "critical_path",
+      "name": "影响冬灌或通水节点的关键线路",
+      "states": "逐施工段给出剩余工程量与最晚完成时间，判定是否赶得上节点"
+    },
+    {
+      "key": "responsible_section",
+      "name": "责任标段",
+      "states": "偏差落到具体标段与责任主体，不接受合并口径的百分比解释"
+    },
+    {
+      "key": "recoverable_quantity",
+      "name": "下一周期可追回的工程量",
+      "states": "给出可追回工程量、所需资源和前提条件，供项目负责人调配"
+    }
+  ],
+  "sample_monthly_report": {
+    "note": "演示资金与实物量分账的对账结构，金额与工程量均为示意值，公开版单价字段不输出",
+    "period": "08月",
+    "currency": "CNY(万元)",
+    "sections": [
+      {
+        "section_id": "SG-01",
+        "responsible_actor": "contractor",
+        "boq_items": [
+          {
+            "item_code": "QH-C25",
+            "name": "C25混凝土渠道砌护",
+            "unit": "m3",
+            "planned_qty": 1200,
+            "supervisor_confirmed_qty": 720,
+            "unit_price": "REDACTED_IN_PUBLIC"
+          }
+        ],
+        "materials_transferred_in_qty": 180,
+        "rework_qty_excluded": 35,
+        "late_visa_pending": 1,
+        "funds": {
+          "prepayment_paid": 300,
+          "progress_payment_approved": 0,
+          "payment_not_completion": true
+        },
+        "critical_path_to": "qtg-1031-lining",
+        "remaining_qty": 480,
+        "recoverable_next_period_qty": 420,
+        "on_track_for_milestone": false
+      },
+      {
+        "section_id": "SG-02",
+        "responsible_actor": "contractor",
+        "boq_items": [
+          {
+            "item_code": "QH-C25",
+            "name": "C25混凝土渠道砌护",
+            "unit": "m3",
+            "planned_qty": 900,
+            "supervisor_confirmed_qty": 810,
+            "unit_price": "REDACTED_IN_PUBLIC"
+          }
+        ],
+        "materials_transferred_out_qty": 180,
+        "rework_qty_excluded": 0,
+        "late_visa_pending": 0,
+        "funds": {
+          "prepayment_paid": 0,
+          "progress_payment_approved": 260,
+          "payment_not_completion": true
+        },
+        "critical_path_to": "qtg-1031-lining",
+        "remaining_qty": 90,
+        "recoverable_next_period_qty": 90,
+        "on_track_for_milestone": true
+      }
+    ],
+    "cross_section_note": "SG-02调出180m3砌护材料至SG-01，仅在SG-01实际消耗后计量一次；SG-01返工35m3不予计量。"
+  }
 }

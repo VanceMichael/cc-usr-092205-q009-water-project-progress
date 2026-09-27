@@ -8,7 +8,14 @@
     "sample_id",
     "actors",
     "facts",
-    "constraints"
+    "constraints",
+    "segregation_rule",
+    "progress_basis",
+    "evidence_chain",
+    "excluded_from_reconfirmation",
+    "public_redaction",
+    "milestones",
+    "monthly_review_required"
   ],
   "properties": {
     "domain": {
@@ -17,7 +24,7 @@
     },
     "version": {
       "type": "integer",
-      "minimum": 1
+      "minimum": 2
     },
     "sample_id": {
       "type": "string",
@@ -25,10 +32,37 @@
     },
     "actors": {
       "type": "array",
-      "minItems": 2,
+      "minItems": 3,
+      "maxItems": 3,
       "items": {
-        "type": "string"
+        "type": "object",
+        "required": ["id", "name", "commits", "may_not"],
+        "properties": {
+          "id": {
+            "enum": ["contractor", "supervisor", "finance"]
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "commits": {
+            "type": "string",
+            "minLength": 1
+          },
+          "may_not": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
       }
+    },
+    "segregation_rule": {
+      "type": "string",
+      "minLength": 1
     },
     "facts": {
       "type": "array",
@@ -43,6 +77,139 @@
       "items": {
         "type": "string"
       }
+    },
+    "progress_basis": {
+      "type": "object",
+      "required": ["organize_by", "must_not_use_as_completion", "principle"],
+      "properties": {
+        "organize_by": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "string"
+          }
+        },
+        "must_not_use_as_completion": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "principle": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "evidence_chain": {
+      "type": "array",
+      "minItems": 7,
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "confirms"],
+        "properties": {
+          "id": {
+            "enum": [
+              "approved_estimate",
+              "contract_boq",
+              "beidou_vehicle_log",
+              "supervisor_measurement",
+              "site_imagery",
+              "design_change",
+              "payment_voucher"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "confirms": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "excluded_from_reconfirmation": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "type": "string"
+      }
+    },
+    "public_redaction": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "milestones": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "project", "deadline", "work", "purpose"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "project": {
+            "type": "string",
+            "minLength": 1
+          },
+          "deadline": {
+            "type": "string",
+            "pattern": "^[0-9]{2}-[0-9]{2}$"
+          },
+          "work": {
+            "type": "string",
+            "minLength": 1
+          },
+          "purpose": {
+            "type": "string",
+            "minLength": 1
+          },
+          "critical_path": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "monthly_review_required": {
+      "type": "array",
+      "minItems": 4,
+      "items": {
+        "type": "object",
+        "required": ["key", "name", "states"],
+        "properties": {
+          "key": {
+            "enum": [
+              "fund_physical_deviation",
+              "critical_path",
+              "responsible_section",
+              "recoverable_quantity"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "states": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "sample_monthly_report": {
+      "type": "object"
     }
   },
   "additionalProperties": false
