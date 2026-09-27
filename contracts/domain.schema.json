@@ -8,7 +8,11 @@
     "sample_id",
     "actors",
     "facts",
-    "constraints"
+    "constraints",
+    "roles",
+    "evidence_sources",
+    "reconciliation_rules",
+    "monthly_close"
   ],
   "properties": {
     "domain": {
@@ -43,6 +47,80 @@
       "items": {
         "type": "string"
       }
+    },
+    "roles": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "responsibility"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "responsibility": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "evidence_sources": {
+      "type": "array",
+      "minItems": 7,
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "proves"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "proves": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "reconciliation_rules": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "monthly_close": {
+      "type": "object",
+      "required": [
+        "outputs",
+        "purpose"
+      ],
+      "properties": {
+        "outputs": {
+          "type": "array",
+          "minItems": 4,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "purpose": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
     }
   },
   "additionalProperties": false
